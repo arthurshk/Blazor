@@ -1,0 +1,45 @@
+﻿@page "/edit-book/{id:int}"
+@using Blazor.Models
+@using Blazor.Services
+@inject NavigationManager Navigation
+@inject BookService BookService
+@rendermode InteractiveServer
+@*Getting the value of the input and providing a form to the user to edit the book title and author.*@
+<EditForm Model="book" OnValidSubmit="HandleValidSubmit" FormName="editBookForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="book.Title" />
+    </div>
+    <div class="form-group">
+        <label for="author">Author</label>
+        <InputText id="author" class="form-control" @bind-Value="book.Author" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</EditForm>
+
+@code {
+    //Parameter used
+    [Parameter]
+    public int id { get; set; }
+
+    private Book book;
+
+    protected override void OnInitialized()
+    {
+        book = BookService.GetBooks().FirstOrDefault(b => b.Id == id);
+        if (book == null)
+        {
+            Navigation.NavigateTo("/books");
+        }
+    }
+
+    private void HandleValidSubmit()
+    {
+        //When everything is done navigate back to books screen.
+        BookService.UpdateBook(book);
+        Navigation.NavigateTo("/books");
+        StateHasChanged();
+    }
+}

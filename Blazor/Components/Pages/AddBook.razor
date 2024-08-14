@@ -1,0 +1,35 @@
+﻿@page "/add-book"
+@using Blazor.Models
+@using Blazor.Services
+@inject BookService BookService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+<h3>Add Book</h3>
+@*Similar form to EditBook in which a book is added based on Title and Author.*@
+<EditForm Model="newBook" OnValidSubmit="HandleValidSubmit" FormName="addBookForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="newBook.Title" />
+    </div>
+    @*Binds and sets the value of the model.*@
+    <div class="form-group">
+        <label for="author">Author</label>
+        <InputText id="author" class="form-control" @bind-Value="newBook.Author" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</EditForm>
+
+@code {
+    private Book newBook = new Book();
+
+    private void HandleValidSubmit()
+    { //What to do when a new book is added.
+        BookService.AddBook(newBook);
+        newBook = new Book(); 
+        Console.WriteLine("Navigation to /books triggered");
+        Navigation.NavigateTo("/books");
+    }
+}
